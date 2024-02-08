@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Dialog, Snackbar } from 'material-ui';
-import {connect } from 'react-redux';
+import { Snackbar } from 'material-ui';
+import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
-import {withRouter } from 'react-router';
 import GlobalLoading from '../GlobalLoading';
 import Button from '../Button/Button';
 import AddProductToBasket from './AddProductToBasket';
@@ -11,14 +10,21 @@ import Calculator from '../Calculator';
 import ReceiptViewer from '../ReceiptViewer';
 import PasswordAsker from '../PasswordAsker';
 import TableViewer from '../TableViewer';
-import { convertToPriceFormat, getFlavorShortNames } from '../../_helpers/formatter';
-import { Product, Category, Receipt, StoreState, ReceiptProduct, Flavor } from '../../_models';
+import {
+  convertToPriceFormat,
+  getFlavorShortNames,
+} from '../../_helpers/formatter';
+import {
+  Receipt,
+  StoreState,
+  ReceiptProduct,
+} from '../../_models';
 import { saveReceiptThunk } from '../../_actions';
 
 const styles = {
   greenColor: '#11de59',
   bottomAreaHeight: 354,
-  wrapperRightWidth: 370
+  wrapperRightWidth: 370,
 };
 
 const Wrapper = styled.div`
@@ -60,7 +66,7 @@ const HeaderItem = styled.div`
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 12px;
-`
+`;
 
 const HeaderTitle = styled.div`
   color: ${styles.greenColor};
@@ -82,7 +88,7 @@ const BottomArea = styled.div`
   padding: 10px;
   background: #eee;
   box-shadow: 0 1px 9px #888;
-`
+`;
 
 const TopArea = styled.div`
   position: absolute;
@@ -93,39 +99,34 @@ const TopArea = styled.div`
   overflow: auto;
 `;
 
-interface Props {
-  products: Product[],
-  categories: Category[],
-  flavors: Flavor[],
-  match: any,
-  location: any,
-  history: any,
-  addReceipt: (receipt: Receipt) => Promise<Receipt>,
-}
+type Props = ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps> & {
+    onCorrectPassword: () => void;
+  };
 
-interface State {
-  addedProducts: Receipt['products'],
+type State = {
+  addedProducts: Receipt['products'];
   openedDialogs: {
-    receipt: boolean,
-    addProduct: boolean,
-    passwordAsker: boolean,
-  },
+    receipt: boolean;
+    addProduct: boolean;
+    passwordAsker: boolean;
+  };
   notifications: {
-    insuficientPay: boolean,
-  },
-  rowSelected?: number,
-  loading: boolean,
-  paymentMode: 'payment' | 'confirm',
-  payment?: number,
-  change?: number,
-  lastReceipt?: Receipt,
-}
+    insuficientPay: boolean;
+  };
+  rowSelected?: number;
+  loading: boolean;
+  paymentMode: 'payment' | 'confirm';
+  payment?: number;
+  change?: number;
+  lastReceipt?: Receipt;
+};
 
 const tableTitles = [
   { title: 'Producto' },
   { title: 'Cantidad' },
   { title: 'Precio Unidad' },
-  { title: 'Precio Total' }
+  { title: 'Precio Total' },
 ];
 
 class Seller extends React.Component<Props, State> {
@@ -133,32 +134,36 @@ class Seller extends React.Component<Props, State> {
     paymentMode: 'payment',
     loading: false,
     notifications: {
-      insuficientPay: false
+      insuficientPay: false,
     },
     openedDialogs: {
       receipt: false,
       addProduct: false,
       passwordAsker: false,
     },
-    addedProducts: []
-  }
+    addedProducts: [],
+  };
 
-  nodeEl?: HTMLElement = undefined
+  nodeEl?: HTMLElement = undefined;
 
   get totalPrice() {
-    return this.state.addedProducts.reduce((total, el) => total + el.totalPrice, 0)
+    return this.state.addedProducts.reduce(
+      (total, el) => total + el.totalPrice,
+      0
+    );
   }
 
   get addedProductSelected() {
-    return this.state.rowSelected === undefined ?
-      undefined : this.state.addedProducts[this.state.rowSelected]
+    return this.state.rowSelected === undefined
+      ? undefined
+      : this.state.addedProducts[this.state.rowSelected];
   }
 
   componentDidMount() {
-    this.nodeEl = findDOMNode(this.refs.wrapper) as HTMLElement
+    this.nodeEl = findDOMNode(this.refs.wrapper) as HTMLElement;
 
-    this.nodeEl.onkeydown = evt => {
-      evt.stopImmediatePropagation()
+    this.nodeEl.onkeydown = (evt) => {
+      evt.stopImmediatePropagation();
 
       if (
         this.state.openedDialogs.addProduct ||
@@ -166,66 +171,70 @@ class Seller extends React.Component<Props, State> {
         this.state.openedDialogs.receipt ||
         evt.repeat
       ) {
-        return false
+        return false;
       }
 
       if (evt.key === 'Enter') {
         if (this.state.paymentMode === 'confirm') {
-          this.handleConfirmPayment()
+          this.handleConfirmPayment();
         }
       } else if (evt.key === 'Backspace') {
         if (this.state.paymentMode === 'confirm') {
-          this.handleGoBackPayment()
+          this.handleGoBackPayment();
         }
       }
 
-      return false
-    }
+      return false;
+    };
   }
 
   componentWillUnmount() {
-    this.nodeEl!.onkeydown = null
+    this.nodeEl!.onkeydown = null;
   }
 
   handleAddProductClick = () => {
     this.setState({
       ...this.state,
       rowSelected: undefined,
-      openedDialogs: { ...this.state.openedDialogs, addProduct: true }
-    })
-  }
+      openedDialogs: { ...this.state.openedDialogs, addProduct: true },
+    });
+  };
 
   handleCancelAddProduct = () => {
     this.setState({
       ...this.state,
-      openedDialogs: { ...this.state.openedDialogs, addProduct: false }
-    })
-  }
+      openedDialogs: { ...this.state.openedDialogs, addProduct: false },
+    });
+  };
 
   handleAddEditProduct = (product: ReceiptProduct) => {
-    this.giveFocusToWrapper()
+    this.giveFocusToWrapper();
 
     let newReceiptProducts: Receipt['products'] = [];
 
     if (this.state.rowSelected === undefined) {
-      newReceiptProducts = [...this.state.addedProducts, product]
+      newReceiptProducts = [...this.state.addedProducts, product];
     } else {
       newReceiptProducts = [...this.state.addedProducts];
-      newReceiptProducts[Number(this.state.rowSelected)] = product
+      newReceiptProducts[Number(this.state.rowSelected)] = product;
     }
 
     this.setState({
       ...this.state,
       addedProducts: newReceiptProducts,
-      openedDialogs: { ...this.state.openedDialogs, addProduct: false }
-    })
-  }
+      openedDialogs: { ...this.state.openedDialogs, addProduct: false },
+    });
+  };
 
   handleConfirmPayment = () => {
     const { addedProducts, change, payment } = this.state;
 
-    if (change === undefined || payment === undefined) { return }
-    if (payment < this.totalPrice) { return }
+    if (change === undefined || payment === undefined) {
+      return;
+    }
+    if (payment < this.totalPrice) {
+      return;
+    }
 
     this.setState({ ...this.state, loading: true });
 
@@ -237,41 +246,43 @@ class Seller extends React.Component<Props, State> {
       payment,
       date: '',
       total: this.totalPrice,
-    }
+    };
 
-    this.props.addReceipt(newReceipt)
-      .then(() => {
-        this.setState({
-          ...this.state,
-          paymentMode: 'payment',
-          addedProducts: [],
-          change: undefined,
-          payment: undefined,
-          lastReceipt: newReceipt,
-          loading: false,
-          openedDialogs: { ...this.state.openedDialogs, receipt: true }
-        })
-      })
-  }
+    this.props.addReceipt(newReceipt).then(() => {
+      this.setState({
+        ...this.state,
+        paymentMode: 'payment',
+        addedProducts: [],
+        change: undefined,
+        payment: undefined,
+        lastReceipt: newReceipt,
+        loading: false,
+        openedDialogs: { ...this.state.openedDialogs, receipt: true },
+      });
+    });
+  };
 
   handleHideNotifications = (reason: string) => {
-    if (reason === 'timeout') { this.closeNotifications(); }
-  }
+    if (reason === 'timeout') {
+      this.closeNotifications();
+    }
+  };
 
   handleGoBackPayment = () => {
-    this.setState({ ...this.state, change: undefined, paymentMode: 'payment' })
-  }
+    this.setState({ ...this.state, change: undefined, paymentMode: 'payment' });
+  };
 
   cancelPayment = () => {
-    this.setState({ ...this.state,
+    this.setState({
+      ...this.state,
       payment: undefined,
       change: undefined,
-      paymentMode: 'payment'
-    })
-  }
+      paymentMode: 'payment',
+    });
+  };
 
   closeDialogs = () => {
-    this.giveFocusToWrapper()
+    this.giveFocusToWrapper();
 
     this.setState({
       ...this.state,
@@ -279,84 +290,92 @@ class Seller extends React.Component<Props, State> {
         addProduct: false,
         receipt: false,
         passwordAsker: false,
-      }
-    })
-  }
+      },
+    });
+  };
 
   closeNotifications = () => {
     this.setState({
       ...this.state,
       notifications: {
-        insuficientPay: false
-      }
-    })
-  }
+        insuficientPay: false,
+      },
+    });
+  };
 
   giveFocusToWrapper = () => {
-    this.nodeEl && this.nodeEl.focus()
-  }
+    this.nodeEl && this.nodeEl.focus();
+  };
 
   handleRowSelected = (idx: number, id: string) => {
-    this.setState({ ...this.state, rowSelected: idx })
-  }
+    this.setState({ ...this.state, rowSelected: idx });
+  };
 
   handleDeleteSelected = () => {
-    if (this.state.rowSelected === undefined) { return; }
+    if (this.state.rowSelected === undefined) {
+      return;
+    }
 
     this.setState({
       ...this.state,
       rowSelected: undefined,
-      addedProducts: this.state.addedProducts
-      .filter((el, idx) => idx !== this.state.rowSelected)
-    })
-  }
+      addedProducts: this.state.addedProducts.filter(
+        (el, idx) => idx !== this.state.rowSelected
+      ),
+    });
+  };
 
   handleEditSelected = () => {
-    if (this.state.rowSelected === undefined) { return; }
+    if (this.state.rowSelected === undefined) {
+      return;
+    }
 
-    const addedProduct = this.state.addedProducts[Number(this.state.rowSelected)]
+    const addedProduct =
+      this.state.addedProducts[Number(this.state.rowSelected)];
 
     this.setState({
       ...this.state,
-      openedDialogs: { ...this.state.openedDialogs, addProduct: true }
-    })
-  }
+      openedDialogs: { ...this.state.openedDialogs, addProduct: true },
+    });
+  };
 
   handleDeleteAll = () => {
-    this.setState({ ...this.state, rowSelected: undefined,  addedProducts: [] })
-  }
+    this.setState({ ...this.state, rowSelected: undefined, addedProducts: [] });
+  };
 
   handleMenuClick = () => {
     this.setState({
       ...this.state,
-      openedDialogs: { ...this.state.openedDialogs, passwordAsker: true }}
-    )
-  }
+      openedDialogs: { ...this.state.openedDialogs, passwordAsker: true },
+    });
+  };
 
   handleCorrectPass = () => {
-    this.props.history.push('/')
-  }
+    this.props.onCorrectPassword();
+  };
 
   calculator = {
     handleBtnClick: (key: string, value?: number) => {
-      this.setState({ ...this.state, payment: value, change: undefined })
+      this.setState({ ...this.state, payment: value, change: undefined });
     },
 
     handleDoneClick: () => {
-      if (!this.state.payment || this.state.addedProducts.length === 0) { return; }
+      if (!this.state.payment || this.state.addedProducts.length === 0) {
+        return;
+      }
 
       const change = this.state.payment - this.totalPrice;
 
       if (change < 0) {
         this.setState({
           ...this.state,
-          notifications: { ...this.state.notifications, insuficientPay: true }
-        })
+          notifications: { ...this.state.notifications, insuficientPay: true },
+        });
       } else {
-        this.setState({ ...this.state, change, paymentMode: 'confirm' })
+        this.setState({ ...this.state, change, paymentMode: 'confirm' });
       }
-    }
-  }
+    },
+  };
 
   render() {
     return (
@@ -365,7 +384,7 @@ class Seller extends React.Component<Props, State> {
 
         <Snackbar
           open={this.state.notifications.insuficientPay}
-          message='Pago Insuficiente!'
+          message="Pago Insuficiente!"
           style={{ textAlign: 'center' }}
           onRequestClose={this.handleHideNotifications}
           autoHideDuration={3000}
@@ -387,7 +406,7 @@ class Seller extends React.Component<Props, State> {
           onCorrectPass={this.handleCorrectPass}
         />
 
-        {this.state.lastReceipt &&
+        {this.state.lastReceipt && (
           <ReceiptViewer
             open={this.state.openedDialogs.receipt}
             printOnEnter
@@ -396,9 +415,9 @@ class Seller extends React.Component<Props, State> {
             onCloseBtnClick={this.closeDialogs}
             onDestroy={this.giveFocusToWrapper}
           />
-        }
+        )}
 
-        <Wrapper tabIndex={0} ref='wrapper'>
+        <Wrapper tabIndex={0} ref="wrapper">
           <WrapperLeft>
             <TopArea>
               <TableViewer
@@ -409,17 +428,19 @@ class Seller extends React.Component<Props, State> {
                 items={this.state.addedProducts.map((el, idx) => ({
                   id: String(idx),
                   elements: [
-                    el.name + ' ' + getFlavorShortNames(el.flavors, this.props.flavors),
+                    el.name +
+                      ' ' +
+                      getFlavorShortNames(el.flavors, this.props.flavors),
                     '' + el.quantity,
                     convertToPriceFormat(el.unitPrice),
-                    convertToPriceFormat(el.totalPrice)
-                  ]
+                    convertToPriceFormat(el.totalPrice),
+                  ],
                 }))}
               />
             </TopArea>
 
-              <BottomArea>
-                {this.state.paymentMode === 'payment' &&
+            <BottomArea>
+              {this.state.paymentMode === 'payment' && (
                 <>
                   <Button isForBottomArea onClick={this.handleAddProductClick}>
                     Agregar Producto
@@ -433,10 +454,12 @@ class Seller extends React.Component<Props, State> {
                   <Button isForBottomArea onClick={this.handleDeleteAll}>
                     Eliminar Todos
                   </Button>
-                  <Button isForBottomArea onClick={this.handleMenuClick}>Menú</Button>
+                  <Button isForBottomArea onClick={this.handleMenuClick}>
+                    Menú
+                  </Button>
                 </>
-                }
-              </BottomArea>
+              )}
+            </BottomArea>
           </WrapperLeft>
 
           <WrapperRight>
@@ -450,16 +473,20 @@ class Seller extends React.Component<Props, State> {
 
               <HeaderItem>
                 <HeaderTitle>Pagar</HeaderTitle>
-                <HeaderTitle>{convertToPriceFormat(this.state.payment)}</HeaderTitle>
+                <HeaderTitle>
+                  {convertToPriceFormat(this.state.payment)}
+                </HeaderTitle>
               </HeaderItem>
 
               <HeaderItem>
                 <HeaderTitle>Cambio</HeaderTitle>
-                <HeaderTitle>{convertToPriceFormat(this.state.change)}</HeaderTitle>
+                <HeaderTitle>
+                  {convertToPriceFormat(this.state.change)}
+                </HeaderTitle>
               </HeaderItem>
             </Header>
 
-            {this.state.paymentMode === 'payment' &&
+            {this.state.paymentMode === 'payment' && (
               <Calculator
                 style={{ marginTop: 10 }}
                 initialValue={this.state.payment}
@@ -469,15 +496,19 @@ class Seller extends React.Component<Props, State> {
                 onDoneClick={this.calculator.handleDoneClick}
                 onDestroy={this.giveFocusToWrapper}
               />
-            }
+            )}
 
-            {this.state.paymentMode === 'confirm' &&
-            <>
-              <Button hasMarginTop onClick={this.handleConfirmPayment}>Confirmar</Button>
-              <Button hasMarginTop onClick={this.handleGoBackPayment}>Atrás</Button>
-            </>
-            }
-          {/* <Button hasMarginTop>Admin</Button> */}
+            {this.state.paymentMode === 'confirm' && (
+              <>
+                <Button hasMarginTop onClick={this.handleConfirmPayment}>
+                  Confirmar
+                </Button>
+                <Button hasMarginTop onClick={this.handleGoBackPayment}>
+                  Atrás
+                </Button>
+              </>
+            )}
+            {/* <Button hasMarginTop>Admin</Button> */}
           </WrapperRight>
         </Wrapper>
       </>
@@ -489,15 +520,10 @@ const mapStateToProps = (state: StoreState) => ({
   products: state.products,
   categories: state.categories,
   flavors: state.flavors,
-})
+});
 
 const mapDispatchToProps = (dispatch: any) => ({
-  addReceipt: (receipt: Receipt) => dispatch(saveReceiptThunk(receipt))
-})
+  addReceipt: (receipt: Receipt) => dispatch(saveReceiptThunk(receipt)),
+});
 
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(Seller)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(Seller);

@@ -1,10 +1,24 @@
+export const views = [
+  'admin',
+  'seller',
+  'products',
+  'categories',
+  'flavors',
+  'reports',
+  'receipts',
+  'settings',
+] as const;
+
+export type View = typeof views[number];
+
 export type StoreState = {
-  products: Product[],
-  categories: Category[],
-  flavors: Flavor[],
-  isGlobalLoading: boolean,
-  errorMessage: string,
-}
+  view: View;
+  products: Product[];
+  categories: Category[];
+  flavors: Flavor[];
+  isGlobalLoading: boolean;
+  errorMessage: string;
+};
 
 export interface Category {
   id: number;
@@ -12,74 +26,74 @@ export interface Category {
 }
 
 export interface ReportCategory extends Category {
-  reports: ReportProductReport[],
-  products: Product[],
-  totalProducts: number,
-  totalProductsSold: number,
-  totalPrice: number,
-  apperancesInReceipts: number,
+  reports: ReportProductReport[];
+  products: Product[];
+  totalProducts: number;
+  totalProductsSold: number;
+  totalPrice: number;
+  apperancesInReceipts: number;
 }
 
 export interface Product {
-  id: number,
-  name: string,
-  printName?: string,
-  units: number,
-  category: Category['id'],
-  image?: string,
-  price: number,
-  description?: string,
-  flavors: { flavorOptions: Flavor['id'][] }[],
+  id: number;
+  name: string;
+  printName?: string;
+  units: number;
+  category: Category['id'];
+  image?: string;
+  price: number;
+  description?: string;
+  flavors: { flavorOptions: Flavor['id'][] }[];
 }
 
 export interface ReceiptProduct {
-  id: Product['id'],
-  category: Category['id'],
-  name: string,
-  printName?: string,
-  quantity: number,
-  flavors: Flavor['id'][],
-  unitPrice: number,
-  totalPrice: number,
+  id: Product['id'];
+  category: Category['id'];
+  name: string;
+  printName?: string;
+  quantity: number;
+  flavors: Flavor['id'][];
+  unitPrice: number;
+  totalPrice: number;
 }
 
 export interface Receipt {
   id: number;
   order: number;
-  products: ReceiptProduct[],
-  total: number,
-  payment: number,
-  change: number,
-  date: string
+  products: ReceiptProduct[];
+  total: number;
+  payment: number;
+  change: number;
+  date: string;
 }
 
 export interface ReportProductReport {
-  productId: Category['id'],
-  categoryId: Category['id'],
-  flavors: Flavor['id'][],
-  priceSold: number,
-  quantitySold: number,
-  totalPriceSold: number,
-  dateSold: Receipt['date'],
+  productId: Category['id'];
+  categoryId: Category['id'];
+  flavors: Flavor['id'][];
+  priceSold: number;
+  quantitySold: number;
+  totalPriceSold: number;
+  dateSold: Receipt['date'];
 }
 
 export interface ReportProduct extends Product {
-  reports: ReportProductReport[]
+  reports: ReportProductReport[];
   totalQuantitySold: number;
   apperancesInReceipts: number;
   totalPrice: number;
 }
 
 export interface Flavor {
-  id: number,
-  name: string,
-  printName?: string,
-  units: number,
-  description?: string,
+  id: number;
+  name: string;
+  printName?: string;
+  units: number;
+  description?: string;
 }
 
 export interface ReportFlavor extends Flavor {
-  reports: ReportProductReport[],
+  reports: ReportProductReport[];
   totalQuantitySold: number;
   apperancesInReceipts: number;
   totalPrice: number;
@@ -91,7 +105,7 @@ export interface DateFilter {
 }
 
 export interface ReportsArgs {
-  filters: { date?: DateFilter }
+  filters: { date?: DateFilter };
 }
 
 export enum DBElementKeys {

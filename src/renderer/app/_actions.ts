@@ -6,10 +6,12 @@ import {
   ReportCategory,
   ReportsArgs,
   Flavor,
-  ReportFlavor } from './_models';
+  ReportFlavor,
+  View} from './_models';
 import * as api from './_api';
 
 export enum Actions {
+  SET_VIEW = 'SET_VIEW',
   SET_PRODUCTS = 'SET_PRODUCTS',
   SET_CATEGORIES = 'SET_CATEGORIES',
   SET_FLAVORS = 'SET_FLAVORS',
@@ -21,6 +23,11 @@ export interface Action {
   type: Actions;
   payload: any;
 }
+
+export const setView = (view: View): Action => ({
+  type: Actions.SET_VIEW,
+  payload: view
+})
 
 export const setProducts = (products: Product[]): Action => ({
   type: Actions.SET_PRODUCTS,

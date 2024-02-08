@@ -1,3 +1,3 @@
 export function delay(secs: number) {
-  return new Promise(resolve => { window.setTimeout(() => { resolve(); }, secs * 1000) })
+  return new Promise(resolve => { window.setTimeout(() => { resolve(true); }, secs * 1000) })
 }

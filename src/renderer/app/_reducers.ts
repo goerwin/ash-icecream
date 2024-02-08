@@ -10,6 +10,9 @@ export default function reducers(state: StoreState, action: Action): StoreState 
     case Actions.SET_PRODUCTS: {
       return { ...state, products: action.payload }
     }
+    case Actions.SET_VIEW: {
+      return { ...state, view: action.payload }
+    }
     case Actions.SET_GLOBAL_LOADING: {
       return { ...state, isGlobalLoading: action.payload }
     }

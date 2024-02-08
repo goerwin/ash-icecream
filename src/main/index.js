@@ -3,6 +3,7 @@
 // if (require('electron-squirrel-startup')) { return; }
 
 require('../../.env');
+require('@electron/remote/main').initialize();
 
 const path = require('path');
 const url = require('url');
@@ -28,6 +29,8 @@ function createWindow() {
     height: defaults.mainWindowMinHeight,
     webPreferences: {
       webSecurity: false,
+      nodeIntegration: true,
+      contextIsolation: false,
       devTools: !isProd
     },
     minWidth: defaults.mainWindowMinWidth,
