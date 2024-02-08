@@ -1,0 +1,27 @@
+.form {
+  font-size: 10px;
+
+  &__row {
+    &.has-buttons {
+      text-align: center;
+    }
+
+    &.has-mb {
+      margin-bottom: 10px;
+    }
+
+    &.has-rowitems {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &__btn {
+      margin-left: 15px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+}

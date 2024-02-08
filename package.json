@@ -1,0 +1,100 @@
+{
+  "name": "icecream-shop",
+  "productName": "Icecream Shop",
+  "description": "",
+  "version": "1.0.0",
+  "main": "src/main/index.js",
+  "scripts": {
+    "dev": "npm run clean && cross-env NODE_ENV=development webpack-dev-server",
+    "prod": "npm run clean && webpack-dev-server",
+    "start": "electron .",
+    "start-dev": "cross-env NODE_ENV=development electron .",
+    "test": "echo \"Error: no test specified :(\"",
+    "clean": "find . -name '.DS_Store' | xargs rm -f ; rm -rf dist ; rm -rf products",
+    "build": "npm run clean && ANALYZER=true webpack",
+    "package-win": "npm run test && npm run build && electron-packager . --platform=win32 --ignore=$npm_package_config_electronPackagerIgnore --out=products --icon=src/_media/logo.ico --asar",
+    "package-win-installer": "npm run package-win && node windowsInstaller",
+    "package-portable-win": "npm run test && npm run build && electron-builder -w",
+    "package-portable-mac": "npm run test && npm run build && electron-builder -m",
+    "package-portable": "npm run test && npm run build && electron-builder -wm",
+    "postinstall": "electron-rebuild"
+  },
+  "build": {
+    "appId": "erwingo.icecream.shop",
+    "directories": {
+      "app": "./",
+      "output": "products"
+    },
+    "win": {
+      "artifactName": "${productName}${arch}.${ext}",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "ia32"
+          ]
+        }
+      ],
+      "icon": "src/_media/logo.ico"
+    },
+    "mac": {
+      "artifactName": "${productName}.${ext}",
+      "icon": "src/_media/logo.icns",
+      "target": "zip"
+    }
+  },
+  "author": "Erwin Gaitan O <erwingaitano@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/fs-extra": "^5.0.2",
+    "@types/material-ui": "^0.21.2",
+    "@types/node": "^8.10.11",
+    "@types/react": "^16.3.13",
+    "@types/react-dom": "^16.0.5",
+    "@types/react-form": "^2.16.0",
+    "@types/react-redux": "^6.0.0",
+    "@types/react-router-dom": "^4.2.6",
+    "@types/webpack": "^4.1.4",
+    "cross-env": "^5.1.6",
+    "css-loader": "^0.28.11",
+    "electron": "^2.0.2",
+    "electron-builder": "^20.15.1",
+    "electron-packager": "^12.1.0",
+    "electron-rebuild": "^1.8.1",
+    "electron-winstaller": "^2.6.4",
+    "file-loader": "^1.1.6",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.21.0",
+    "ts-loader": "^4.2.0",
+    "ts-node": "^6.0.2",
+    "typescript": "^2.7.2",
+    "webfonts-loader": "^4.1.0",
+    "webpack": "^4.6.0",
+    "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-cli": "^2.1.2",
+    "webpack-dev-server": "^3.1.1"
+  },
+  "dependencies": {
+    "dot-prop": "^4.2.0",
+    "dot-prop-immutable": "^1.4.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "escpos": "^2.4.9",
+    "fs-extra": "^6.0.1",
+    "material-ui": "^0.20.0",
+    "moment": "^2.22.1",
+    "react": "^16.3.2",
+    "react-dates": "^16.7.0",
+    "react-dom": "^16.3.2",
+    "react-form": "^3.5.3",
+    "react-redux": "^5.0.7",
+    "react-router-dom": "^4.2.2",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.2.0",
+    "reset-css": "^3.0.0",
+    "styled-components": "^3.2.6",
+    "why-did-you-update": "^0.1.1"
+  }
+}

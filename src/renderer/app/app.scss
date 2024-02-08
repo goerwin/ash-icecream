@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  background-color: #cacaca;
+  font-family: Arial;
+  user-select: none;
+}
+
+#app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('~app/_media/icecream-party.jpg');
+  background-position: center center;
+  background-size: 37%;
+}
