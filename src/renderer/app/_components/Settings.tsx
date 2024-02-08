@@ -1,7 +1,7 @@
 import React from 'react';
 // https://github.com/ThorstenHans/ngx-electron/issues/71#issuecomment-955324149
-// import { remote } from 'electron'
 import remote from '@electron/remote';
+import { ipcRenderer } from 'electron';
 import fs from 'fs-extra';
 import { Dialog, Snackbar } from 'material-ui';
 import styled from 'styled-components';
@@ -88,8 +88,16 @@ export default class Settings extends React.Component<Props, State> {
     }
   };
 
-  handleImportDB = () => {
+  handleImportDB = async () => {
     // todo:
+    const bb = await ipcRenderer.invoke('OPEN_IMPORT_DB_PICKER');
+    console.log('bb', bb);
+
+    // todo: get items
+    //todo: save in memory and then pass that info to the main process
+    // use zod
+    return;
+
     const filepath: any = remote.dialog.showOpenDialog({
       properties: ['openFile'],
       defaultPath: userPreferencesDBStore.getItem(
@@ -138,12 +146,16 @@ export default class Settings extends React.Component<Props, State> {
   };
 
   handleExportDB = () => {
+    console.log('bb', remote);
+
     // todo:
     let filepath: any = remote.dialog.showSaveDialog({
       defaultPath: userPreferencesDBStore.getItem(
         DBUserPreferencesKeys.DB_BACKUP_FILEPATH
       ),
     });
+
+    console.log('bb', filepath);
 
     if (filepath) {
       if (!/\.json$/.test(filepath)) {
@@ -176,7 +188,8 @@ export default class Settings extends React.Component<Props, State> {
         this.handleImportDB();
       }
 
-      window.location.reload();
+      // todo: it should reload
+      // window.location.reload();
     } catch (err: any) {
       this.setState({
         ...this.state,

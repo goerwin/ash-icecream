@@ -9,7 +9,7 @@ export const views = [
   'settings',
 ] as const;
 
-export type View = typeof views[number];
+export type View = (typeof views)[number];
 
 export type StoreState = {
   view: View;

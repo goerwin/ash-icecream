@@ -5,10 +5,18 @@
 require('../../.env');
 require('@electron/remote/main').initialize();
 
+// const { BrowserWindow } = require('@electron/remote')
+
 const path = require('path');
 const url = require('url');
-// eslint-disable-next-line
-const { app, BrowserWindow, Menu, ipcMain, globalShortcut } = require('electron');
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  ipcMain,
+  globalShortcut,
+  dialog,
+} = require('electron');
 const packageJson = require('../../package.json');
 const { defaults } = require('./_constants/userPreferences');
 const { printReceipt } = require('./_helpers/printer');
@@ -31,29 +39,33 @@ function createWindow() {
       webSecurity: false,
       nodeIntegration: true,
       contextIsolation: false,
-      devTools: !isProd
+      devTools: !isProd,
     },
     minWidth: defaults.mainWindowMinWidth,
     minHeight: defaults.mainWindowMinHeight,
     backgroundColor: '#cacaca',
     show: false,
-    titleBarStyle: 'default'
+    titleBarStyle: 'default',
   });
 
   // Load the index.html of the app.
   if (isProd) {
-    mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, '../../dist/index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
+    mainWindow.loadURL(
+      url.format({
+        pathname: path.join(__dirname, '../../dist/index.html'),
+        protocol: 'file:',
+        slashes: true,
+      })
+    );
   } else {
-    mainWindow.loadURL(url.format({
-      protocol: 'http',
-      // TODO: Pass the port or host
-      host: 'localhost:8000',
-      pathname: 'index.html'
-    }));
+    mainWindow.loadURL(
+      url.format({
+        protocol: 'http',
+        // TODO: Pass the port or host
+        host: 'localhost:8000',
+        pathname: 'index.html',
+      })
+    );
   }
 
   // Emitted when the window is closed.
@@ -76,7 +88,19 @@ app.on('ready', () => {
     printReceipt(JSON.parse(receiptData));
   });
 
-  if (!isProd) { mainWindow.webContents.openDevTools(); }
+  ipcMain.handle('OPEN_IMPORT_DB_PICKER', async (evt, data) => {
+    console.log('bb', data);
+    const dialogEl = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      defaultPath: '', // DB_BACKUP_FILEPATH todo:
+    });
+
+    return dialogEl.filePaths[0];
+  });
+
+  if (!isProd) {
+    mainWindow.webContents.openDevTools();
+  }
 });
 
 // Quit when all windows are closed.
