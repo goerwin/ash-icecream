@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StoreState, View, views } from '../../_helpers/models';
+import { StoreState, View, views } from '../../schemas';
 import Admin from './_components/Admin';
 import Seller from './_components/Seller/Seller';
 import Products from './_components/Products';
@@ -51,9 +51,7 @@ class Main extends React.Component<
 const mapStateToProps = (state: StoreState) => ({
   view: state.view,
   notification: state.errorMessage,
-  products: state.products,
-  categories: state.categories,
-  flavors: state.flavors,
+  db: state.DB,
   isLoading: state.isGlobalLoading,
 });
 

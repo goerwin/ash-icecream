@@ -1,11 +1,9 @@
 import React from 'react';
-import { Product, Category, StoreState, ReportProduct, ReportsArgs, Flavor } from '../../../_helpers/models';
-import { saveFlavorThunk, deleteFlavorThunk } from '../_actions';
-import { getReportFlavors } from '../_api'
+import { deleteFlavorThunk, saveFlavorThunk } from '../_actions';
+import { getReportFlavors } from '../_helpers/api';
+import ReportPage, { InjectedProps as Props } from '../_hocs/ReportPage';
 import AddFlavor from './AddFlavor';
 import Reporter from './Reporter';
-import ReportPage, { InjectedProps as Props } from '../_hocs/ReportPage';
-import { convertToPriceFormat } from '../_helpers/formatter';
 
 class Flavors extends React.Component<Props> {
   render() {
@@ -21,7 +19,7 @@ class Flavors extends React.Component<Props> {
         />
 
         <Reporter
-          title='Sabores'
+          title="Sabores"
           onTableRowSelected={this.props.onTableRowSelected}
           totalPriceSold={this.props.totalPriceSold}
           totalElementsSold={this.props.totalElementsSold}
@@ -47,7 +45,7 @@ class Flavors extends React.Component<Props> {
               el.printName || '-',
               el.units || 0,
               el.totalQuantitySold,
-            ]
+            ],
           }))}
           buttons={[
             { id: 'add', onClick: this.props.onAddClick, name: '+' },
@@ -56,7 +54,7 @@ class Flavors extends React.Component<Props> {
           ]}
         />
       </>
-    )
+    );
   }
 }
 
@@ -66,4 +64,4 @@ export default ReportPage({
   getReportElements: getReportFlavors,
   deleteMessageTitle: 'Eliminar Sabor',
   deleteMessage: 'Quieres eliminar el sabor',
-})(Flavors)
+})(Flavors);

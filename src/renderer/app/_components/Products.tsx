@@ -1,16 +1,16 @@
 import React from 'react';
-import { Product, Category, StoreState, ReportProduct, ReportsArgs, Flavor } from '../../../_helpers/models';
-import { saveProductThunk, deleteProductThunk } from '../_actions';
-import { getReportProducts } from '../_api'
+import { Category } from '../../../schemas';
+import { deleteProductThunk, saveProductThunk } from '../_actions';
+import { getReportProducts } from '../_helpers/api';
+import { convertToPriceFormat } from '../_helpers/formatter';
+import ReportPage, { InjectedProps as Props } from '../_hocs/ReportPage';
 import AddProduct from './AddProduct';
 import Reporter from './Reporter';
-import ReportPage, { InjectedProps as Props } from '../_hocs/ReportPage';
-import { convertToPriceFormat } from '../_helpers/formatter';
 
 class Products extends React.Component<Props> {
   getProductCategoryName(categoryId: Category['id']) {
-    const category = this.props.categories.find(el2 => el2.id === categoryId)
-    return (category && category.name) || '-'
+    const category = this.props.categories.find((el2) => el2.id === categoryId);
+    return (category && category.name) || '-';
   }
 
   render() {
@@ -28,18 +28,16 @@ class Products extends React.Component<Props> {
         />
 
         <Reporter
-          title='Productos'
+          title="Productos"
           onTableRowSelected={this.props.onTableRowSelected}
           totalPriceSold={this.props.totalPriceSold}
           totalElementsSold={this.props.totalElementsSold}
           elementIdRowSelected={this.props.elementIdRowSelected}
           isLoading={this.props.isLoading}
-
           onDateFilterSelected={this.props.onDateFilterSelected}
           filterDateActiveItemId={this.props.filterDateActiveItemId}
           filterStartDate={this.props.filterStartDate}
           filterEndDate={this.props.filterEndDate}
-
           onBackClick={this.props.onBackClick}
           notification={this.props.notification}
           onCloseNotification={this.props.onCloseNotification}
@@ -62,8 +60,8 @@ class Products extends React.Component<Props> {
               convertToPriceFormat(el.price),
               el.units || 0,
               el.totalQuantitySold,
-              convertToPriceFormat(el.totalPrice)
-            ]
+              convertToPriceFormat(el.totalPrice),
+            ],
           }))}
           buttons={[
             { id: 'add', onClick: this.props.onAddClick, name: '+' },
@@ -72,7 +70,7 @@ class Products extends React.Component<Props> {
           ]}
         />
       </>
-    )
+    );
   }
 }
 
@@ -82,4 +80,4 @@ export default ReportPage({
   getReportElements: getReportProducts,
   deleteMessageTitle: 'Eliminar Producto',
   deleteMessage: 'Quieres eliminar el producto',
-})(Products)
+})(Products);

@@ -8,15 +8,23 @@ const categorySchema = z.object({
 const flavorSchema = z.object({
   id: z.number(),
   name: z.string(),
+  // todo: for now
+  printName: z.string().optional(),
+  units: z.number().optional(),
 });
 
 const productSchema = z.object({
   id: z.number(),
   name: z.string(),
   price: z.coerce.number(),
+  description: z.string().optional(),
   // todo: not sure why is like this
   flavors: z.array(z.object({ flavorOptions: z.array(z.number()) })),
   // flavors: z.array(flavorSchema.shape.id),
+
+  // todo: for now
+  printName: z.string().optional(),
+  units: z.number().optional(),
 
   category: categorySchema.shape.id,
 });

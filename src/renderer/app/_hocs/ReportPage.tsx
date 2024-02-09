@@ -12,7 +12,7 @@ import {
   ReportsArgs,
   StoreState,
   View,
-} from '../../../_helpers/models';
+} from '../../../schemas';
 
 // Props you want the resulting component to take (besides the props of the wrapped component)
 interface Props {
@@ -282,9 +282,9 @@ export default (options: {
             />
 
             <Comp
-              products={this.props.products}
-              categories={this.props.categories}
-              flavors={this.props.flavors}
+              products={this.props.db.PRODUCTS}
+              categories={this.props.db.CATEGORIES}
+              flavors={this.props.db.FLAVORS}
               reportElements={this.state.reportElements}
               isDialogElementOpened={this.state.isDialogElementOpened}
               isElementEdit={this.state.isElementEdit}
@@ -315,9 +315,7 @@ export default (options: {
     const mapStateToProps = (state: StoreState) => ({
       view: state.view,
       notification: state.errorMessage,
-      products: state.products,
-      categories: state.categories,
-      flavors: state.flavors,
+      db: state.DB,
       isLoading: state.isGlobalLoading,
     });
 

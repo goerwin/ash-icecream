@@ -1,14 +1,19 @@
-import { Product, Category, Receipt, Flavor, View, DB } from '../../schemas';
-import * as api from './_api';
+import {
+  Product,
+  Category,
+  Receipt,
+  Flavor,
+  View,
+  DB,
+  DBElementKeys,
+} from '../../schemas';
+import { deleteElement, saveElement } from './_helpers/api';
 
 export enum Actions {
   SET_VIEW = 'SET_VIEW',
-  SET_PRODUCTS = 'SET_PRODUCTS',
-  SET_CATEGORIES = 'SET_CATEGORIES',
-  SET_FLAVORS = 'SET_FLAVORS',
+  SET_DB = 'SET_DB',
   SET_GLOBAL_LOADING = 'SET_GLOBAL_LOADING',
   SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE',
-  SET_DB = 'SET_DB',
 }
 
 export interface Action {
@@ -36,117 +41,48 @@ export const setErrorMessage = (message: string): Action => ({
   payload: message,
 });
 
-function operateLoadingStartAndError(dispatch: any, prom: Promise<any>) {
+async function operateAllElements(dispatch: any, apiFn: () => Promise<DB>) {
   dispatch(setGlobalLoading(true));
-  return prom
+
+  return apiFn()
+    .then((db) => dispatch(setDB(db)))
+    .then(() => dispatch(setGlobalLoading(false)))
     .catch((err) => {
       dispatch(setErrorMessage(err.message));
-    })
-    .then(() => {
-      dispatch(setGlobalLoading(false));
     });
-}
-
-function operateAllElements<T>(
-  dispatch: any,
-  apiFn: () => Promise<T>,
-  actionCreator: (a: T) => Action
-) {
-  return apiFn().then((elements) => dispatch(actionCreator(elements)));
 }
 
 // THUNKS
 
-function getAllElementsThunk<T>(
-  getAllElementsFn: () => Promise<T[]>,
-  actionCreator: (elements: T[]) => Action
-) {
-  return (dispatch: any) =>
-    operateLoadingStartAndError(
-      dispatch,
-      operateAllElements(dispatch, getAllElementsFn, actionCreator)
-    );
-}
-
-function saveElementThunk<T>(
-  element: T,
-  saveFn: (element: T) => Promise<T>,
-  getAllElementsFn: () => Promise<T[]>,
-  actionCreatorFn: (elements: T[]) => Action
-) {
+function saveElementThunk(element: unknown, dbKey: DBElementKeys) {
   return (dispatch: any) => {
-    return operateLoadingStartAndError(
-      dispatch,
-      saveFn(element).then(() =>
-        operateAllElements(dispatch, getAllElementsFn, actionCreatorFn)
-      )
-    );
+    return operateAllElements(dispatch, () => saveElement(dbKey, element));
   };
 }
 
-function deleteElementThunk<T, U>(
-  id: T,
-  deleteFn: (id: T) => Promise<void>,
-  getAllElementsFn: () => Promise<U[]>,
-  actionCreatorFn: (a: U[]) => Action
-) {
+function deleteElementThunk(elementId: number, dbKey: DBElementKeys) {
   return (dispatch: any) => {
-    return operateLoadingStartAndError(
-      dispatch,
-      deleteFn(id).then(() =>
-        operateAllElements(dispatch, getAllElementsFn, actionCreatorFn)
-      )
-    );
+    return operateAllElements(dispatch, () => deleteElement(dbKey, elementId));
   };
 }
-
-// Products
-
-export const getAllProductsThunk = () =>
-  getAllElementsThunk(api.getProducts, setProducts);
 
 export const saveProductThunk = (product: Product) =>
-  saveElementThunk(product, api.saveProduct, api.getProducts, setProducts);
+  saveElementThunk(product, 'PRODUCTS');
 
-export const deleteProductThunk = (id: Product['id']) =>
-  deleteElementThunk(id, api.deleteProduct, api.getProducts, setProducts);
-
-// Categories
-
-export const getAllCategoriesThunk = () =>
-  getAllElementsThunk(api.getCategories, setCategories);
+export const deleteProductThunk = (id: number) =>
+  deleteElementThunk(id, 'PRODUCTS');
 
 export const saveCategoryThunk = (category: Category) =>
-  saveElementThunk(
-    category,
-    api.saveCategory,
-    api.getCategories,
-    setCategories
-  );
+  saveElementThunk(category, 'CATEGORIES');
 
-export const deleteCategoryThunk = (id: Category['id']) =>
-  deleteElementThunk(id, api.deleteCategory, api.getCategories, setCategories);
-
-// Flavors
-
-export const getAllFlavorsThunk = () =>
-  getAllElementsThunk(api.getFlavors, setFlavors);
+export const deleteCategoryThunk = (id: number) =>
+  deleteElementThunk(id, 'CATEGORIES');
 
 export const saveFlavorThunk = (flavor: Flavor) =>
-  saveElementThunk(flavor, api.saveFlavor, api.getFlavors, setFlavors);
+  saveElementThunk(flavor, 'FLAVORS');
+
+export const deleteFlavorThunk = (id: number) =>
+  deleteElementThunk(id, 'FLAVORS');
 
 export const saveReceiptThunk = (receipt: Receipt) =>
-  saveElementThunk(receipt, api.saveReceipt, api.getReceipts, setReceipts);
-
-export const deleteFlavorThunk = (id: Flavor['id']) =>
-  deleteElementThunk(id, api.deleteFlavor, api.getFlavors, setFlavors);
-
-// Receipts
-
-export const saveReceiptThunk = (receipt: Receipt) => (dispatch: any) =>
-  operateLoadingStartAndError(dispatch, api.saveReceipt(receipt)).then(() =>
-    Promise.all([
-      operateAllElements(dispatch, api.getProducts, setProducts),
-      operateAllElements(dispatch, api.getFlavors, setFlavors),
-    ])
-  );
+  saveElementThunk(receipt, 'RECEIPTS');

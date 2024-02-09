@@ -9,15 +9,8 @@ import ModalButtonsWrapper from './ModalButtonsWrapper';
 import Confirmation from '../_components/Confirmation';
 import GlobalLoading from '../_components/GlobalLoading';
 
-// @ts-ignore
-import ElectronStore from '../../../_db/electronStore';
-import {
-  elementsDBStore,
-  receiptsDBStore,
-  userPreferencesDBStore,
-  // @ts-ignore
-} from '../../../_singletons/dbInstances';
 import { dbSchema } from '../../../schemas';
+import { deleteDB, getUserDataPath } from '../_helpers/api';
 
 const items = [
   { title: 'Atrás', id: 'back', link: '/' },
@@ -35,9 +28,6 @@ const Bold = styled.span`
   font-weight: bold;
 `;
 
-enum DBUserPreferencesKeys {
-  DB_BACKUP_FILEPATH = 'DB_BACKUP_FILEPATH',
-}
 type Props = {
   onBackClick: () => void;
 };
@@ -103,8 +93,7 @@ export default class Settings extends React.Component<Props, State> {
   };
 
   handleDeleteDB = () => {
-    elementsDBStore.deleteAll();
-    receiptsDBStore.deleteAll();
+    return deleteDB();
   };
 
   handleConfirmation = () => {
@@ -171,13 +160,7 @@ export default class Settings extends React.Component<Props, State> {
         >
           <Paragraph>
             <Bold>UserDataPath: </Bold>
-            {ElectronStore.getUserDataPath()}
-          </Paragraph>
-          <Paragraph>
-            <Bold>DBBackupFilePath: </Bold>
-            {userPreferencesDBStore.getItem(
-              DBUserPreferencesKeys.DB_BACKUP_FILEPATH
-            ) || '-'}
+            {'todo:'}
           </Paragraph>
         </Dialog>
 

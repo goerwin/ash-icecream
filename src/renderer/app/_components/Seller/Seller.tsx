@@ -388,9 +388,9 @@ class Seller extends React.Component<Props, State> {
         <AddProductToBasket
           open={this.state.openedDialogs.addProduct}
           productSelected={this.addedProductSelected}
-          products={this.props.products}
-          categories={this.props.categories}
-          flavors={this.props.flavors}
+          products={this.props.db.PRODUCTS}
+          categories={this.props.db.CATEGORIES}
+          flavors={this.props.db.FLAVORS}
           onAddProduct={this.handleAddEditProduct}
           onCancelClick={this.handleCancelAddProduct}
         />
@@ -406,7 +406,7 @@ class Seller extends React.Component<Props, State> {
             open={this.state.openedDialogs.receipt}
             printOnEnter
             receipt={this.state.lastReceipt}
-            flavors={this.props.flavors}
+            flavors={this.props.db.FLAVORS}
             onCloseBtnClick={this.closeDialogs}
             onDestroy={this.giveFocusToWrapper}
           />
@@ -425,7 +425,7 @@ class Seller extends React.Component<Props, State> {
                   elements: [
                     el.name +
                       ' ' +
-                      getFlavorShortNames(el.flavors, this.props.flavors),
+                      getFlavorShortNames(el.flavors, this.props.db.FLAVORS),
                     '' + el.quantity,
                     convertToPriceFormat(el.unitPrice),
                     convertToPriceFormat(el.totalPrice),
@@ -512,9 +512,7 @@ class Seller extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: StoreState) => ({
-  products: state.products,
-  categories: state.categories,
-  flavors: state.flavors,
+  db: state.DB,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({

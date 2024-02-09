@@ -1,6 +1,6 @@
 import React from 'react';
 import { saveCategoryThunk, deleteCategoryThunk } from '../_actions';
-import { getReportCategories } from '../_api';
+import { getReportCategories } from '../_helpers/api';
 import AddCategory from './AddCategory';
 import Reporter from './Reporter';
 import ReportPage, { InjectedProps as Props } from '../_hocs/ReportPage';
