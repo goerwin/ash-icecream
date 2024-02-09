@@ -12,7 +12,7 @@ import {
   ReportsArgs,
   StoreState,
   View,
-} from '../_models';
+} from '../../../_helpers/models';
 
 // Props you want the resulting component to take (besides the props of the wrapped component)
 interface Props {

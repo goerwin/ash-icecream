@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { StoreState } from './_models';
+import { StoreState } from '../../_helpers/models';
 import { Actions, Action } from './_actions';
 
 export default function reducers(state: StoreState, action: Action): StoreState {

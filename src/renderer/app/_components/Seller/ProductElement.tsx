@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { convertToPriceFormat } from '../../_helpers/formatter'
-import { Flavor, Product, ReceiptProduct } from '../../_models'
+import { Flavor, Product, ReceiptProduct } from '../../../../_helpers/models'
 import ProductFlavorPicker, { getFlavorName } from './ProductFlavorPicker'
 
 const ProductDiv = styled.div`

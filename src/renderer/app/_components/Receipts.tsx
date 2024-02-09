@@ -1,5 +1,5 @@
 import React from 'react';
-import { Receipt } from '../_models';
+import { Receipt } from '../../../_helpers/models';
 import { deleteReceipt, getReportReceipts, deleteAllReceipts } from '../_api'
 import Reporter from './Reporter';
 import ReceiptViewer from './ReceiptViewer'

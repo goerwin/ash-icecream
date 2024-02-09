@@ -4,7 +4,7 @@ import { Dialog, TextField, Snackbar } from 'material-ui';
 import styled from 'styled-components';
 import Button from './Button/Button';
 import ModalButtonsWrapper from './ModalButtonsWrapper';
-import { Flavor } from '../_models';
+import { Flavor } from '../../../_helpers/models';
 
 interface Props {
   id?: Flavor['id'],

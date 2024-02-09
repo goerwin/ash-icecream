@@ -8,7 +8,7 @@ import {
   SelectField } from 'material-ui'
 
 import Button from '../Button/Button'
-import { Product, Category, Flavor, Receipt, ReceiptProduct } from '../../_models'
+import { Product, Category, Flavor, Receipt, ReceiptProduct } from '../../../../_helpers/models'
 import ProductElement from './ProductElement'
 
 const Wrapper = styled.div`

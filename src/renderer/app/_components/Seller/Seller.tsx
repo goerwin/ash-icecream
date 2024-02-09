@@ -14,11 +14,7 @@ import {
   convertToPriceFormat,
   getFlavorShortNames,
 } from '../../_helpers/formatter';
-import {
-  Receipt,
-  StoreState,
-  ReceiptProduct,
-} from '../../_models';
+import { Receipt, StoreState, ReceiptProduct } from '../../../../schemas';
 import { saveReceiptThunk } from '../../_actions';
 
 const styles = {
@@ -240,7 +236,6 @@ class Seller extends React.Component<Props, State> {
 
     const newReceipt: Receipt = {
       id: 0,
-      order: 0,
       products: addedProducts,
       change,
       payment,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Product, Category, StoreState, ReportProduct, ReportsArgs, Flavor } from '../_models';
+import { Product, Category, StoreState, ReportProduct, ReportsArgs, Flavor } from '../../../_helpers/models';
 import { saveFlavorThunk, deleteFlavorThunk } from '../_actions';
 import { getReportFlavors } from '../_api'
 import AddFlavor from './AddFlavor';

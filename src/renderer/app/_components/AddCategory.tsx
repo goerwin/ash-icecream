@@ -4,7 +4,7 @@ import { Dialog, TextField, Snackbar } from 'material-ui';
 import styled from 'styled-components';
 import Button from './Button/Button';
 import ModalButtonsWrapper from './ModalButtonsWrapper';
-import { Product, Category } from '../_models';
+import { Product, Category } from '../../../_helpers/models';
 
 interface Props {
   id?: Category['id'],

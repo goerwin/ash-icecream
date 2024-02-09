@@ -12,7 +12,7 @@ import {
 import SvgClose from 'material-ui/svg-icons/navigation/close';
 import Button from './Button/Button';
 import { Form, FormRow } from './Form/Form';
-import { Product, Category, Flavor } from '../_models';
+import { Product, Category, Flavor } from '../../../_helpers/models';
 import ModalButtonsWrapper from './ModalButtonsWrapper';
 
 interface Props {

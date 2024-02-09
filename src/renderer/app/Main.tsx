@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StoreState, View, views } from './_models';
+import { StoreState, View, views } from '../../_helpers/models';
 import Admin from './_components/Admin';
 import Seller from './_components/Seller/Seller';
 import Products from './_components/Products';

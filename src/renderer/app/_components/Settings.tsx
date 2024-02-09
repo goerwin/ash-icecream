@@ -1,8 +1,5 @@
 import React from 'react';
-// https://github.com/ThorstenHans/ngx-electron/issues/71#issuecomment-955324149
-import remote from '@electron/remote';
 import { ipcRenderer } from 'electron';
-import fs from 'fs-extra';
 import { Dialog, Snackbar } from 'material-ui';
 import styled from 'styled-components';
 import BigMenu from './BigMenu/BigMenu';
@@ -11,7 +8,6 @@ import ModalButtonsWrapper from './ModalButtonsWrapper';
 
 import Confirmation from '../_components/Confirmation';
 import GlobalLoading from '../_components/GlobalLoading';
-import { DBElementBiggestIdKeys, DBElementKeys } from '../_models';
 
 // @ts-ignore
 import ElectronStore from '../../../_db/electronStore';
@@ -21,6 +17,7 @@ import {
   userPreferencesDBStore,
   // @ts-ignore
 } from '../../../_singletons/dbInstances';
+import { dbSchema } from '../../../schemas';
 
 const items = [
   { title: 'Atrás', id: 'back', link: '/' },
@@ -90,87 +87,19 @@ export default class Settings extends React.Component<Props, State> {
 
   handleImportDB = async () => {
     // todo:
-    const bb = await ipcRenderer.invoke('OPEN_IMPORT_DB_PICKER');
-    console.log('bb', bb);
+    const db = dbSchema.parse(
+      await ipcRenderer.invoke('OPEN_IMPORT_DB_PICKER')
+    );
+    console.log('bb', db);
 
     // todo: get items
     //todo: save in memory and then pass that info to the main process
     // use zod
     return;
-
-    const filepath: any = remote.dialog.showOpenDialog({
-      properties: ['openFile'],
-      defaultPath: userPreferencesDBStore.getItem(
-        DBUserPreferencesKeys.DB_BACKUP_FILEPATH
-      ),
-    });
-
-    if (filepath && filepath[0]) {
-      const db = fs.readJSONSync(filepath[0]);
-
-      receiptsDBStore.deleteAll();
-      receiptsDBStore.setItem(
-        DBElementKeys.RECEIPTS,
-        db[DBElementKeys.RECEIPTS]
-      );
-      receiptsDBStore.setItem(
-        DBElementBiggestIdKeys.RECEIPTS,
-        db[DBElementBiggestIdKeys.RECEIPTS]
-      );
-
-      elementsDBStore.deleteAll();
-      elementsDBStore.setItem(
-        DBElementKeys.PRODUCTS,
-        db[DBElementKeys.PRODUCTS]
-      );
-      elementsDBStore.setItem(
-        DBElementBiggestIdKeys.PRODUCTS,
-        db[DBElementBiggestIdKeys.PRODUCTS]
-      );
-      elementsDBStore.setItem(
-        DBElementKeys.CATEGORIES,
-        db[DBElementKeys.CATEGORIES]
-      );
-      elementsDBStore.setItem(
-        DBElementBiggestIdKeys.CATEGORIES,
-        db[DBElementBiggestIdKeys.CATEGORIES]
-      );
-      elementsDBStore.setItem(DBElementKeys.FLAVORS, db[DBElementKeys.FLAVORS]);
-      elementsDBStore.setItem(
-        DBElementBiggestIdKeys.FLAVORS,
-        db[DBElementBiggestIdKeys.FLAVORS]
-      );
-
-      window.location.reload();
-    }
   };
 
   handleExportDB = () => {
-    console.log('bb', remote);
-
     // todo:
-    let filepath: any = remote.dialog.showSaveDialog({
-      defaultPath: userPreferencesDBStore.getItem(
-        DBUserPreferencesKeys.DB_BACKUP_FILEPATH
-      ),
-    });
-
-    console.log('bb', filepath);
-
-    if (filepath) {
-      if (!/\.json$/.test(filepath)) {
-        filepath += '.json';
-      }
-
-      userPreferencesDBStore.setItem(
-        DBUserPreferencesKeys.DB_BACKUP_FILEPATH,
-        filepath
-      );
-      fs.outputJSONSync(filepath, {
-        ...receiptsDBStore.store,
-        ...elementsDBStore.store,
-      });
-    }
   };
 
   handleDeleteDB = () => {

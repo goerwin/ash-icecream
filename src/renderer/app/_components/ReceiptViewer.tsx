@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { findDOMNode } from 'react-dom';
 import { Dialog } from 'material-ui';
 import TableViewer from './TableViewer';
-import { Receipt, Flavor } from '../_models';
+import { Receipt, Flavor } from '../../../_helpers/models';
 import Button from './Button/Button';
 import ModalButtonsWrapper from './ModalButtonsWrapper';
 import {

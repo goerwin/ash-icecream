@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 import { SelectField, MenuItem } from 'material-ui'
 
-import { Product, Flavor } from '../../_models'
+import { Product, Flavor } from '../../../../_helpers/models'
 
 const ProductSelectFlavorContainer = styled.div`
   position: absolute;

@@ -2,36 +2,20 @@
 // https://github.com/electron/windows-installer
 // if (require('electron-squirrel-startup')) { return; }
 
-require('../../.env');
-require('@electron/remote/main').initialize();
-
-// const { BrowserWindow } = require('@electron/remote')
-
-const path = require('path');
-const url = require('url');
-const {
-  app,
-  BrowserWindow,
-  Menu,
-  ipcMain,
-  globalShortcut,
-  dialog,
-} = require('electron');
-const packageJson = require('../../package.json');
-const { defaults } = require('./_constants/userPreferences');
-const { printReceipt } = require('./_helpers/printer');
+import path from 'path';
+import url from 'url';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import packageJson from '../../package.json';
+import * as defaults from './_constants/userPreferences';
+import { importDBFile } from './_helpers/file';
 
 const isProd = process.env.NODE_ENV === 'production';
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-/** @type {Electron.BrowserWindow | undefined} */
-let mainWindow;
+let mainWindow: BrowserWindow | null = null;
 
-// TODO: Create a more modular createWindow function
 // Create the browser window.
 function createWindow() {
-  mainWindow = new BrowserWindow({
+  const window = new BrowserWindow({
     width: defaults.mainWindowMinWidth,
     title: packageJson.productName,
     height: defaults.mainWindowMinHeight,
@@ -50,7 +34,7 @@ function createWindow() {
 
   // Load the index.html of the app.
   if (isProd) {
-    mainWindow.loadURL(
+    window.loadURL(
       url.format({
         pathname: path.join(__dirname, '../../dist/index.html'),
         protocol: 'file:',
@@ -58,7 +42,7 @@ function createWindow() {
       })
     );
   } else {
-    mainWindow.loadURL(
+    window.loadURL(
       url.format({
         protocol: 'http',
         // TODO: Pass the port or host
@@ -69,33 +53,32 @@ function createWindow() {
   }
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
+  window.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
+    // todo: do callback function
     mainWindow = null;
   });
+
+  return window;
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  createWindow();
+  mainWindow = createWindow();
   mainWindow.show();
 
-  ipcMain.on('PRINT_RECEIPT', (evt, receiptData) => {
-    printReceipt(JSON.parse(receiptData));
-  });
-
-  ipcMain.handle('OPEN_IMPORT_DB_PICKER', async (evt, data) => {
-    console.log('bb', data);
+  ipcMain.handle('OPEN_IMPORT_DB_PICKER', async (_evt) => {
     const dialogEl = await dialog.showOpenDialog({
       properties: ['openFile'],
       defaultPath: '', // DB_BACKUP_FILEPATH todo:
     });
 
-    return dialogEl.filePaths[0];
+    const db = importDBFile(dialogEl.filePaths[0]);
+    return db;
   });
 
   if (!isProd) {
@@ -121,6 +104,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

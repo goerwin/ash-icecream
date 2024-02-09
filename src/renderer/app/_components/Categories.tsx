@@ -1,7 +1,6 @@
 import React from 'react';
-import { Product, Category, StoreState, ReportProduct, ReportsArgs, Flavor } from '../_models';
 import { saveCategoryThunk, deleteCategoryThunk } from '../_actions';
-import { getReportCategories } from '../_api'
+import { getReportCategories } from '../_api';
 import AddCategory from './AddCategory';
 import Reporter from './Reporter';
 import ReportPage, { InjectedProps as Props } from '../_hocs/ReportPage';
@@ -21,7 +20,7 @@ class Categories extends React.Component<Props> {
         />
 
         <Reporter
-          title='Categorías'
+          title="Categorías"
           onTableRowSelected={this.props.onTableRowSelected}
           totalPriceSold={this.props.totalPriceSold}
           totalElementsSold={this.props.totalElementsSold}
@@ -40,14 +39,14 @@ class Categories extends React.Component<Props> {
             { title: 'Total Productos Vendidos' },
             { title: 'Precio Total' },
           ]}
-          elements={this.props.reportElements.map(el => ({
+          elements={this.props.reportElements.map((el) => ({
             id: String(el.id),
             elements: [
               el.name,
               el.totalProducts,
               el.totalProductsSold,
-              convertToPriceFormat(el.totalPrice)
-            ]
+              convertToPriceFormat(el.totalPrice),
+            ],
           }))}
           buttons={[
             { id: 'add', onClick: this.props.onAddClick, name: '+' },
@@ -56,7 +55,7 @@ class Categories extends React.Component<Props> {
           ]}
         />
       </>
-    )
+    );
   }
 }
 
@@ -66,4 +65,4 @@ export default ReportPage({
   getReportElements: getReportCategories,
   deleteMessageTitle: 'Eliminar Categoría',
   deleteMessage: 'Quieres eliminar la categoría',
-})(Categories)
+})(Categories);
