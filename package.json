@@ -15,7 +15,7 @@
     "ts-main-build": "rm -rf distMain && tsc --build src/main/tsconfig.json",
     "test": "echo \"Error: no test specified :(\"",
     "clean": "find . -name '.DS_Store' | xargs rm -f ; rm -rf dist ; rm -rf products",
-    "build": "npm run clean && ANALYZER=true webpack",
+    "build": "npm run clean && ANALYZER=true webpack && npm run ts-main-build",
     "tsc": "tsc --noEmit",
     "package-win": "npm run test && npm run build && electron-packager . --platform=win32 --ignore=$npm_package_config_electronPackagerIgnore --out=products --icon=src/_media/logo.ico --asar",
     "package-win-installer": "npm run package-win && node windowsInstaller",

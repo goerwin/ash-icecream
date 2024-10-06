@@ -18,19 +18,19 @@ export async function deleteReceipt() {
   return {} as any;
 }
 export async function getReportReceipts() {
-  return {} as any;
+  return [] as any;
 }
 export async function deleteAllReceipts() {
   return {} as any;
 }
 export async function getReportProducts() {
-  return {} as any;
+  return [] as any[];
 }
 export async function getReportCategories() {
-  return {} as any;
+  return [] as any[];
 }
 export async function getReportFlavors() {
-  return {} as any;
+  return [] as any[];
 }
 
 export async function deleteDB() {

@@ -14,7 +14,19 @@ import Main from './Main';
 // Prevent zomming in the page with pinch gesture/shortcuts
 webFrame.setVisualZoomLevelLimits(1, 1);
 
-Promise.resolve({} as any).then((db) => {
+const initialDB: StoreState['DB'] = {
+  CATEGORIES: [],
+  CATEGORIES_BIGGEST_ID: 0,
+  FLAVORS: [],
+  FLAVORS_BIGGEST_ID: 0,
+  PRODUCTS: [],
+  PRODUCTS_BIGGEST_ID: 0,
+  pw: '1234',
+  RECEIPTS: [],
+  RECEIPTS_BIGGEST_ID: 0,
+};
+
+Promise.resolve(initialDB).then((db) => {
   const initialState: StoreState = {
     DB: db,
     view: 'admin',
