@@ -10,7 +10,7 @@ const url = require('url');
 const { app, BrowserWindow, Menu, ipcMain, globalShortcut } = require('electron');
 const packageJson = require('../../package.json');
 const { defaults } = require('./_constants/userPreferences');
-const { printReceipt } = require('./_helpers/printer');
+// const { printReceipt } = require('./_helpers/printer');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -70,7 +70,7 @@ app.on('ready', () => {
   mainWindow.show();
 
   ipcMain.on('PRINT_RECEIPT', (evt, receiptData) => {
-    printReceipt(JSON.parse(receiptData));
+    // printReceipt(JSON.parse(receiptData));
   });
 
   if (!isProd) { mainWindow.webContents.openDevTools(); }
