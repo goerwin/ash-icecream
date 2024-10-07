@@ -4,6 +4,9 @@
   "description": "",
   "version": "1.0.0",
   "main": "src/main/index.js",
+  "engines": {
+    "node": ">= 8.17.0 < 9"
+  },
   "scripts": {
     "dev": "npm run clean && cross-env NODE_ENV=development webpack-dev-server",
     "prod": "npm run clean && webpack-dev-server",

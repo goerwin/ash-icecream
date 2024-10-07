@@ -3,8 +3,9 @@ import { Dialog } from 'material-ui'
 import styled from 'styled-components'
 
 import Calculator from './Calculator'
+// @ts-ignore
+import { pwDBStore } from '../../../_singletons/dbInstances'
 
-const pw = 1111
 
 const Title = styled.div`
   font-size: 40px;
@@ -47,6 +48,9 @@ export default class PasswordAsker extends React.Component<Props, State> {
   }
 
   handleDoneClick = () => {
+    // note: it should be a number
+    const pw = pwDBStore.getItem('PW') || 1111;
+
     if (this.state.currentNumber === pw) {
       this.props.onCorrectPass()
     } else {
